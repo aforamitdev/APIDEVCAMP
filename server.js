@@ -9,12 +9,14 @@ const app = express();
 app.use(express.json());
 
 const bootcamps = require("./routes/bootcamp");
+const courses = require("./routes/courses");
 connectDB();
 
 if (process.env.NODE_ENV === "undefined") {
   app.use(morgan("dev"));
 }
 app.use("/api/v1/bootcamps", bootcamps);
+app.use("/api/v1/courses", courses);
 
 app.use(errorHandlers);
 
