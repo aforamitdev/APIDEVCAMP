@@ -23,7 +23,9 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
   let queryStr = JSON.stringify(req.query);
 
   queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
-  query = Bootcamp.find(JSON.parse(queryStr));
+  console.log(queryStr);
+  query = Bootcamp.find(JSON.parse(queryStr)).populate("courses"); //! courses reverse populated
+
   if (req.query.select) {
     const field = req.query.select.split(",").join(" ");
     query = Bootcamp.find().select(field);
@@ -31,8 +33,6 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
   if (req.query.sort) {
     const sortBy = req.query.sort(",").join(" ");
     query = Bootcamp.find().sort(sortBy);
-  } else {
-    query = Bootcamp.find().sort("-createdAt");
   }
   const bootcamps = await query;
 

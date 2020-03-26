@@ -108,6 +108,7 @@ const BootcampSchema = new mongoose.Schema(
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
   }
+  //! virtuals to reverse populate
 );
 
 // create bootcamp slugify
@@ -136,4 +137,17 @@ BootcampSchema.pre("save", async function(next) {
   this.address = undefined;
   next();
 });
+
+BootcampSchema.pre("remove", async function(next) {
+  await this.model("Course").deleteMany({ bootcamp: this._id });
+});
+
+BootcampSchema.virtual("courses", {
+  //! reverse populate
+  ref: "Course",
+  localField: "_id",
+  foreignField: "bootcamp",
+  justOne: false
+});
+
 module.exports = mongoose.model("Bootcamp", BootcampSchema);
