@@ -8,7 +8,34 @@ const geoCoder = require("../utils/geocoder");
 // @access Public
 
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
-  const bootcamps = await Bootcamp.find();
+  console.log(req.body, req.params);
+  let query;
+  // copy query string
+  const reqQuery = { ...req.query };
+  // create query string
+
+  // Field to exclude
+  const removeField = ["select"];
+
+  removeField.forEach(param => delete reqQuery[param]);
+  console.log(reqQuery);
+
+  let queryStr = JSON.stringify(req.query);
+
+  queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
+  query = Bootcamp.find(JSON.parse(queryStr));
+  if (req.query.select) {
+    const field = req.query.select.split(",").join(" ");
+    query = Bootcamp.find().select(field);
+  }
+  if (req.query.sort) {
+    const sortBy = req.query.sort(",").join(" ");
+    query = Bootcamp.find().sort(sortBy);
+  } else {
+    query = Bootcamp.find().sort("-createdAt");
+  }
+  const bootcamps = await query;
+
   res.status(200).json({ success: true, data: bootcamps });
 });
 
