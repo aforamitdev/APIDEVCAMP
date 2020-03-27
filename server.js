@@ -34,3 +34,5 @@ process.on("unhandledRejection", (err, prommis) => {
     process.exit(1);
   });
 });
+
+// /update and delete course
