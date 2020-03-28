@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/asyncHandler");
 const User = require("../models/User");
@@ -68,3 +70,7 @@ const sendTokenResponse = (user, statusCode, res) => {
     .cookie("token", token, options)
     .json({ success: true, token });
 };
+
+// @desc Get current logged in user
+// @route POST /api/v1/auth/me
+//

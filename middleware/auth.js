@@ -1,0 +1,40 @@
+// @ts-nocheck
+
+const jwt = require("jsonwebtoken");
+const asyncHandler = require("./asyncHandler");
+const ErrorResponse = require("../utils/errorResponse");
+const User = require("../models/User");
+
+exports.protect = asyncHandler(async (req, res, next) => {
+  let token;
+  console.log(req.headers.authorization);
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+  // else if(req.cookies.token){
+  //   token=req.cookies.token
+  // }
+  // make sure token is send
+  if (!token) {
+    return next(
+      new ErrorResponse("Not Authroize to access this route as", 401)
+    );
+  }
+  try {
+    console.log(process.env.JWT_SECRATE);
+    const decode = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(
+      decode,
+      "-----------------------------decode----------------------------------------"
+    );
+    req.user = await User.findById(decode.id);
+    next();
+  } catch (err) {
+    return next(
+      new ErrorResponse("Not Authroize to access this route --", 401)
+    );
+  }
+});
