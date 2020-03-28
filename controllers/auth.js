@@ -21,6 +21,9 @@ exports.register = asyncHandler(async (req, res, next) => {
       new ErrorResponse("Passowrd provide an email and password", 404)
     );
   }
+
+  const token = user.getSignedJwtToken();
+
   // check for user
   res.status(200).json({ sucess: true, token: token });
 });
@@ -73,4 +76,11 @@ const sendTokenResponse = (user, statusCode, res) => {
 
 // @desc Get current logged in user
 // @route POST /api/v1/auth/me
-//
+// @access Private
+exports.getMe = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  res.status(200).json({
+    sucess: true,
+    data: user
+  });
+});

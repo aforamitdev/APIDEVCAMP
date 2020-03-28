@@ -8,7 +8,7 @@ const {
   getBootcampImRadius
 } = require("../controllers/bootcamps");
 
-const { protect } = require("../middleware/auth");
+const { protect, authroize } = require("../middleware/auth");
 
 //! include other router
 const courseRouter = require("./courses");
@@ -23,7 +23,7 @@ router.route("/radius/:zipcode/:distance").get(getBootcampImRadius);
 router
   .route("/")
   .get(getBootcamps)
-  .post(protect, createBootcamp);
+  .post(protect, authroize("publisher", "admin"), createBootcamp);
 router
   .route("/:id")
   .get(getBootcamp)

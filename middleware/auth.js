@@ -38,3 +38,17 @@ exports.protect = asyncHandler(async (req, res, next) => {
     );
   }
 });
+
+exports.authroize = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      new next(
+        ErrorResponse(
+          `User role ${req.user.role} is not authroize to access this route`,
+          401
+        )
+      );
+    }
+    next();
+  };
+};
